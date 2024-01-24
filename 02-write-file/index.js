@@ -9,40 +9,35 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const promptText = 'Hi! Enter whatever you want :';
-let isFirstInput = true;
+const promptText = 'Hi! Enter whatever you want: ';
 
 function writeFile() {
-  rl.question(promptText, (inputText) => {
-    if (inputText.toLowerCase() === 'exit') {
+  fs.writeFile(filePath, '', (err) => {
+    if (err) {
+      console.error('An error has occurred while creating the file:', err);
       rl.close();
     } else {
-      fs.writeFile(filePath, inputText, (err) => {
-        if (err) {
-          console.error('An error has occurred :', err);
-        } else {
-          console.log(`The text was successfully written into ${filePath}`);
-          addMore();
-        }
-      });
+      console.log(`File ${filePath} has been created.`);
+      addText();
     }
   });
 }
 
-function addMore() {
-  isFirstInput = false;
-  rl.question('', (inputText) => {
-    if (inputText.toLocaleLowerCase() === 'exit') {
+function addText() {
+  rl.question(promptText, (inputText) => {
+    if (inputText.toLowerCase() === 'exit') {
       rl.close();
     } else {
-      fs.appendFile(filePath, `\n\n${inputText}`, (err) => {
+      fs.appendFile(filePath, `${inputText}\n\n`, (err) => {
         if (err) {
-          console.error('An error has occurred :', err);
-        } else {
-          console.log(
-            `The text gas been successfully appended into ${filePath}`,
+          console.error(
+            'An error has occurred while writing to the file:',
+            err,
           );
-          addMore();
+          rl.close();
+        } else {
+          console.log(`The text has been successfully added to ${filePath}`);
+          addText();
         }
       });
     }
@@ -52,7 +47,7 @@ function addMore() {
 writeFile();
 
 function handleExit() {
-  console.log('Buy!');
+  console.log('Bye!');
   process.exit();
 }
 
